@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>webrtc</title>
+  </head>
+  <body>
+    <script>
+      (async function () {
+        const rc = new RTCPeerConnection();
+
+        let streams;
+        try {
+          streams = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+        } catch (err) {
+          console.log("media error:", err);
+        }
+
+        streams.getTracks().forEach((track) => {
+          rc.addTrack(track, streams);
+        });
+
+        const ws = new WebSocket("ws://localhost:3300");
+
+        rc.onicecandidate = (e) => {
+          if (e.candidate) {
+            ws.send(
+              JSON.stringify({
+                event: "candidate",
+                data: e.candidate,
+              })
+            );
+            console.log("sent ice candidate to server.", e.candidate);
+          }
+        };
+
+        rc.ondatachannel = (e) => {
+          const channel = e.channel;
+          channel.onmessage = (e) => console.log("on message :", e.data);
+          channel.onopen = (e) => console.log("Connection opened!!");
+          rc.channel = channel;
+        };
+
+        ws.onmessage = (e) => {
+          const { event, data } = JSON.parse(e.data);
+
+          if (event === "offer") {
+            console.log("offer received from server:", data);
+            rc.setRemoteDescription(data);
+            rc.createAnswer()
+              .then((answer) => {
+                return rc.setLocalDescription(answer);
+              })
+              .then(() => {
+                ws.send(
+                  JSON.stringify({
+                    event: "answer",
+                    data: rc.localDescription,
+                  })
+                );
+                console.log("answer sent to server:", data);
+              });
+          }
+
+          if (event === "candidate") {
+            console.log("candidate received from server and set.", data);
+            rc.addIceCandidate(data);
+          }
+        };
+      })();
+    </script>
+  </body>
+</html>
