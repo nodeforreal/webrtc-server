@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "start-ws": "node index.js",
     "dev": "node --watch --inspect server.js",
     "sfu": "node --watch --inspect index.js"
   },

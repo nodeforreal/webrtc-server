@@ -14,14 +14,42 @@ app.listen(PORT, () => {
   console.log("Port is listening on " + PORT);
 });
 
+const config = {
+  iceServers: [
+    {
+      urls: "stun:stun.relay.metered.ca:80",
+    },
+    {
+      urls: "turn:global.relay.metered.ca:80",
+      username: "92bd35bda92e2b08f8052c74",
+      credential: "rlp6S0cU7HuSSUBv",
+    },
+    {
+      urls: "turn:global.relay.metered.ca:80?transport=tcp",
+      username: "92bd35bda92e2b08f8052c74",
+      credential: "rlp6S0cU7HuSSUBv",
+    },
+    {
+      urls: "turn:global.relay.metered.ca:443",
+      username: "92bd35bda92e2b08f8052c74",
+      credential: "rlp6S0cU7HuSSUBv",
+    },
+    {
+      urls: "turns:global.relay.metered.ca:443?transport=tcp",
+      username: "92bd35bda92e2b08f8052c74",
+      credential: "rlp6S0cU7HuSSUBv",
+    },
+  ],
+};
+
 const websocket = new Websocket.Server({ port: 3300 });
 
 websocket.on("connection", (ws) => {
   console.log("ws connection opened.");
 
-  const peer = new wrtc.RTCPeerConnection();
-  peer.addTransceiver("video", {direction: "recvonly"})
-  
+  const peer = new wrtc.RTCPeerConnection(config);
+  peer.addTransceiver("video", { direction: "recvonly" });
+
   const dc = peer.createDataChannel("chat");
 
   dc.onopen = () => {
