@@ -51,7 +51,8 @@
           rc.addTrack(track, streams);
         });
 
-        const ws = new WebSocket("ws://localhost:3300");
+        // const ws = new WebSocket("ws://localhost:3300");
+        const ws = new WebSocket("ws://webrtc-server-q8hv.onrender.com");
 
         rc.onicecandidate = (e) => {
           if (e.candidate) {
