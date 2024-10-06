@@ -14,7 +14,6 @@
         try {
           streams = await navigator.mediaDevices.getUserMedia({
             video: true,
-            audio: true,
           });
         } catch (err) {
           console.log("media error:", err);
