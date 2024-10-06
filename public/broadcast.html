@@ -8,7 +8,8 @@
   </head>
   <body>
     <video id="my-video" autoplay></video>
-
+    <a href="/broadcast">Broadcast</a>
+    <a href="/consumer">Consumer</a>
     <script>
       async function init() {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -20,7 +21,35 @@
       }
 
       function createPeer() {
-        const peer = new RTCPeerConnection();
+        const config = {
+          iceServers: [
+            {
+              urls: "stun:stun.relay.metered.ca:80",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:80",
+              username: "92bd35bda92e2b08f8052c74",
+              credential: "rlp6S0cU7HuSSUBv",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:80?transport=tcp",
+              username: "92bd35bda92e2b08f8052c74",
+              credential: "rlp6S0cU7HuSSUBv",
+            },
+            {
+              urls: "turn:global.relay.metered.ca:443",
+              username: "92bd35bda92e2b08f8052c74",
+              credential: "rlp6S0cU7HuSSUBv",
+            },
+            {
+              urls: "turns:global.relay.metered.ca:443?transport=tcp",
+              username: "92bd35bda92e2b08f8052c74",
+              credential: "rlp6S0cU7HuSSUBv",
+            },
+          ],
+        };
+
+        const peer = new RTCPeerConnection(config);
         peer.onnegotiationneeded = () => handleonnegotiationneeded(peer);
         return peer;
       }
