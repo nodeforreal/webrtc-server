@@ -52,7 +52,7 @@
         });
 
         // const ws = new WebSocket("ws://localhost:3300");
-        const ws = new WebSocket("ws://webrtc-server-q8hv.onrender.com");
+        const ws = new WebSocket("wss://webrtc-server-q8hv.onrender.com");
 
         rc.onicecandidate = (e) => {
           if (e.candidate) {
